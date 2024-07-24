@@ -1,0 +1,15 @@
+{
+	"id": "nodebb-plugin-openai",
+	"url": "https://github.com/NodeBB/nodebb-plugin-openai",
+	"library": "./library.js",
+	"hooks": [
+		{ "hook": "static:app.load", "method": "init" },
+		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
+		{ "hook": "action:mentions.notify", "method": "actionMentionsNotify" },
+		{ "hook": "action:messaging.save", "method": "actionMessagingSave" }
+	],
+	"modules": {
+		"../admin/plugins/openai.js": "./public/lib/admin.js"
+	},
+	"templates": "templates"
+}

@@ -1,0 +1,47 @@
+{
+  "name": "nodebb-plugin-openai",
+  "version": "1.0.0",
+  "description": "A NodeBB OpenAI plugin",
+  "main": "library.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodebb/nodebb-plugin-openai"
+  },
+  "keywords": [
+    "nodebb",
+    "plugin",
+    "openai"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nodebb/nodebb-plugin-openai/issues"
+  },
+  "readmeFilename": "README.md",
+  "nbbpm": {
+    "compatibility": "^3.2.0"
+  },
+  "dependencies": {
+    "openai": "4.53.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "19.3.0",
+    "@commitlint/config-angular": "19.3.0",
+    "eslint": "8.57.0",
+    "eslint-config-nodebb": "0.2.1",
+    "eslint-plugin-import": "2.29.1",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.7"
+  }
+}
