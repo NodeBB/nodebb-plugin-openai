@@ -41,6 +41,28 @@
 						</select>
 					</div>
 				</div>
+				<div class="">
+					<h5 class="fw-bold tracking-tight settings-header">Restrictions</h5>
+
+					<div class="mb-3">
+						<label class="form-label" for="minimumReputation">Minimum Reputation</label>
+						<input type="text" id="minimumReputation" name="minimumReputation" title="Minimum Reputation" class="form-control">
+						<p class="form-text">
+							Minimum reputation required to mention chatgpt user. (0 to disable)
+						</p>
+					</div>
+					<div class="mb-3">
+						<label class="form-label" form="allowedGroups">Allowed Groups</label>
+						<select class="form-select" multiple id="allowedGroups" name="allowedGroups" size="10">
+							{{{ each groups }}}
+							<option value="{./displayName}">{./displayName}</option>
+							{{{ end }}}
+						</select>
+						<p class="form-text">
+							Only users in these groups will be able to mention the chatgpt user. Leave blank to allow all groups.
+						</p>
+					</div>
+				</div>
 			</form>
 		</div>
 

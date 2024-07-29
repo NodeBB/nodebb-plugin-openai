@@ -14,8 +14,20 @@ const user = require.main.require('./src/user');
 const messaging = require.main.require('./src/messaging');
 const api = require.main.require('./src/api');
 const privileges = require.main.require('./src/privileges');
+const groups = require.main.require('./src/groups');
+const sockets = require.main.require('./src/socket.io');
 
 const plugin = module.exports;
+
+const defaults = {
+	apikey: '',
+	'chatgpt-username': '',
+	enablePrivateMessages: 'off',
+	model: 'gpt-3.5-turbo',
+	minimumReputation: 0,
+	allowedGroups: '[]',
+};
+
 
 plugin.init = async (params) => {
 	const { router /* , middleware , controllers */ } = params;
@@ -29,6 +41,11 @@ plugin.init = async (params) => {
 	routeHelpers.setupAdminPageRoute(router, '/admin/plugins/openai', controllers.renderAdminPage);
 };
 
+async function getSettings() {
+	const settings = await meta.settings.get('openai')
+	return {...defaults, ...settings };
+}
+
 plugin.actionMentionsNotify = async function (hookData) {
 	try {
 		const { notification } = hookData;
@@ -36,7 +53,11 @@ plugin.actionMentionsNotify = async function (hookData) {
 			return;
 		}
 
-		const settings = (await meta.settings.get('openai')) || {};
+		const settings = await getSettings();
+		if (!await canUseOpenAI(notification.from, settings)) {
+			return;
+		}
+
 		const chatgptusername = settings['chatgpt-username'];
 		const chatgptUid = await user.getUidByUsername(chatgptusername);
 		if (!chatgptUid) {
@@ -79,7 +100,11 @@ plugin.actionMessagingSave = async function (hookData) {
 		if (message.system) {
 			return;
 		}
-		const settings = (await meta.settings.get('openai')) || {};
+		const settings = await getSettings();
+		if (!await canUseOpenAI(message.fromuid, settings)) {
+			return;
+		}
+
 		const chatgptusername = settings['chatgpt-username'];
 		const chatgptUid = await user.getUidByUsername(chatgptusername);
 		const { roomId, content, fromuid } = message;
@@ -139,6 +164,55 @@ plugin.actionMessagingSave = async function (hookData) {
 		console.error(err.stack);
 	}
 };
+
+async function canUseOpenAI(uid, settings) {
+	if (!await checkReputation(uid, settings)) {
+		return false;
+	}
+	if (!await checkGroupMembership(uid, settings)) {
+		return false;
+	}
+	return true;
+}
+
+async function checkReputation(uid, settings) {
+	const reputation = await user.getUserField(uid, 'reputation');
+	const hasEnoughRep = parseInt(settings.minimumReputation, 10) === 0 || parseInt(reputation, 10) >= parseInt(settings.minimumReputation, 10);
+
+	if (!hasEnoughRep) {
+		sockets.server.in(`uid_${uid}`).emit('event:alert', {
+			type: 'danger',
+			title: '[[global:alert.error]]',
+			message: `[[openai:error.need-x-reputation-to-mention, ${settings.minimumReputation}]]`,
+		});
+	}
+	return hasEnoughRep;
+}
+
+async function checkGroupMembership(uid, settings) {
+	let allowedGroups = [];
+	try {
+		allowedGroups = JSON.parse(settings.allowedGroups) || [];
+	} catch (err) {
+		console.error(err);
+		allowedGroups = [];
+	}
+
+	if (!allowedGroups.length) {
+		return true;
+	}
+
+	const isMembers = await groups.isMemberOfGroups(uid, allowedGroups);
+	const memberOfAny = isMembers.includes(true);
+	if (!memberOfAny) {
+		sockets.server.in(`uid_${uid}`).emit('event:alert', {
+			type: 'danger',
+			title: '[[global:alert.error]]',
+			message: `[[error:no-privileges]]`,
+		});
+	}
+	return memberOfAny;
+}
 
 async function getMessageIds(roomId, uid, start, stop) {
 	const isPublic = await db.getObjectField(`chat:room:${roomId}`, 'public');
