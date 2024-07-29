@@ -13,6 +13,7 @@ const topics = require.main.require('./src/topics');
 const user = require.main.require('./src/user');
 const messaging = require.main.require('./src/messaging');
 const api = require.main.require('./src/api');
+const privileges = require.main.require('./src/privileges');
 
 const plugin = module.exports;
 
@@ -42,6 +43,10 @@ plugin.actionMentionsNotify = async function (hookData) {
 			return;
 		}
 		if (notification.tid && notification.bodyLong.startsWith(`@${chatgptusername}`)) {
+			const canReply = await privileges.topics.can('topics:reply', notification.tid, chatgptUid);
+			if (!canReply) {
+				return;
+			}
 			const message = notification.bodyLong.replace(new RegExp(`^@${chatgptusername}`), '');
 			if (message.length) {
 				const response = await chatComplete(message);
