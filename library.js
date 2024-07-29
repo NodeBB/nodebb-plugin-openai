@@ -26,6 +26,7 @@ const defaults = {
 	model: 'gpt-3.5-turbo',
 	minimumReputation: 0,
 	allowedGroups: '[]',
+	systemPrompt: 'You are a helpful assistant',
 };
 
 
@@ -227,15 +228,25 @@ async function getMessageIds(roomId, uid, start, stop) {
 	);
 }
 
-async function chatComplete(message) {
+async function chatComplete(messages) {
 	if (!openai) {
 		throw new Error('API not created!');
 	}
-	const isConversation = Array.isArray(message);
-	const { model } = await meta.settings.get('openai');
+	const isConversation = Array.isArray(messages);
+	const { model, systemPrompt } = await getSettings();
+	const conversation = [];
+	if (systemPrompt) {
+		conversation.push({ role: 'system', content: systemPrompt });
+	}
+	if (isConversation) {
+		conversation.push(...messages);
+	} else {
+		conversation.push({ role: 'user', content: messages });
+	}
+
 	const chatCompletion = await openai.chat.completions.create({
 		model: model || 'gpt-3.5-turbo',
-		messages: isConversation ? message : [{ role: 'user', content: message }],
+		messages: conversation,
 	});
 
 	return chatCompletion.choices[0]?.message?.content;

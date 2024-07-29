@@ -40,7 +40,12 @@
 							<option value="gpt-4">gpt-4</option>
 						</select>
 					</div>
+					<div class="">
+						<label class="form-label" for="systemPrompt">System Prompt</label>
+						<textarea class="form-control" id="systemPrompt" name="systemPrompt" title="System prompt" placeholder="You are a helpful assistant"></textarea>
+					</div>
 				</div>
+
 				<div class="">
 					<h5 class="fw-bold tracking-tight settings-header">Restrictions</h5>
 
