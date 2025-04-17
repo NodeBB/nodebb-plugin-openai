@@ -6,7 +6,11 @@
 		{ "hook": "static:app.load", "method": "init" },
 		{ "hook": "filter:admin.header.build", "method": "addAdminNavigation" },
 		{ "hook": "action:mentions.notify", "method": "actionMentionsNotify" },
-		{ "hook": "action:messaging.save", "method": "actionMessagingSave" }
+		{ "hook": "action:messaging.save", "method": "actionMessagingSave" },
+		{ "hook": "filter:topic.thread_tools", "method": "filterTopicThreadTools" }
+	],
+	"scripts": [
+		"./public/lib/main.js"
 	],
 	"modules": {
 		"../admin/plugins/openai.js": "./public/lib/admin.js"

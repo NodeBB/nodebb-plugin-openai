@@ -1,3 +1,5 @@
 {
-	"error.need-x-reputation-to-mention": "You need at least %1 reputation for mentioning chatgpt"
+	"error.need-x-reputation-to-mention": "You need at least %1 reputation for mentioning chatgpt",
+	"summarize-topic": "Summarize Topic",
+	"topic-summary": "Topic Summary"
 }

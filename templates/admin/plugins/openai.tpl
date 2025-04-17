@@ -42,7 +42,7 @@
 					</div>
 					<div class="">
 						<label class="form-label" for="systemPrompt">System Prompt</label>
-						<textarea class="form-control" id="systemPrompt" name="systemPrompt" title="System prompt" placeholder="You are a helpful assistant"></textarea>
+						<textarea class="form-control" id="systemPrompt" name="systemPrompt" title="System prompt" placeholder="You are a helpful assistant" rows="8"></textarea>
 					</div>
 				</div>
 

@@ -10,12 +10,15 @@ const controllers = require('./lib/controllers');
 const routeHelpers = require.main.require('./src/routes/helpers');
 const socketHelpers = require.main.require('./src/socket.io/helpers');
 const topics = require.main.require('./src/topics');
+const posts = require.main.require('./src/posts');
 const user = require.main.require('./src/user');
 const messaging = require.main.require('./src/messaging');
 const api = require.main.require('./src/api');
 const privileges = require.main.require('./src/privileges');
 const groups = require.main.require('./src/groups');
 const sockets = require.main.require('./src/socket.io');
+const socketPlugins = require.main.require('./src/socket.io/plugins');
+const summary = require('./lib/summary');
 
 const plugin = module.exports;
 
@@ -166,21 +169,21 @@ plugin.actionMessagingSave = async function (hookData) {
 	}
 };
 
-async function canUseOpenAI(uid, settings) {
-	if (!await checkReputation(uid, settings)) {
+async function canUseOpenAI(uid, settings, silent = false) {
+	if (!await checkReputation(uid, settings, silent)) {
 		return false;
 	}
-	if (!await checkGroupMembership(uid, settings)) {
+	if (!await checkGroupMembership(uid, settings, silent)) {
 		return false;
 	}
 	return true;
 }
 
-async function checkReputation(uid, settings) {
+async function checkReputation(uid, settings, silent) {
 	const reputation = await user.getUserField(uid, 'reputation');
 	const hasEnoughRep = parseInt(settings.minimumReputation, 10) === 0 || parseInt(reputation, 10) >= parseInt(settings.minimumReputation, 10);
 
-	if (!hasEnoughRep) {
+	if (!hasEnoughRep && !silent) {
 		sockets.server.in(`uid_${uid}`).emit('event:alert', {
 			type: 'danger',
 			title: '[[global:alert.error]]',
@@ -190,7 +193,7 @@ async function checkReputation(uid, settings) {
 	return hasEnoughRep;
 }
 
-async function checkGroupMembership(uid, settings) {
+async function checkGroupMembership(uid, settings, silent) {
 	let allowedGroups = [];
 	try {
 		allowedGroups = JSON.parse(settings.allowedGroups) || [];
@@ -205,7 +208,7 @@ async function checkGroupMembership(uid, settings) {
 
 	const isMembers = await groups.isMemberOfGroups(uid, allowedGroups);
 	const memberOfAny = isMembers.includes(true);
-	if (!memberOfAny) {
+	if (!memberOfAny && !silent) {
 		sockets.server.in(`uid_${uid}`).emit('event:alert', {
 			type: 'danger',
 			title: '[[global:alert.error]]',
@@ -262,3 +265,29 @@ plugin.addAdminNavigation = (header) => {
 	return header;
 };
 
+plugin.filterTopicThreadTools = async (hookData) => {
+	if (!await canUseOpenAI(hookData.uid, await getSettings(), true)) {
+		return hookData;
+	}
+	hookData.tools.push({
+		class: 'openai-summarize-topic',
+		icon: 'fa-wand-magic-sparkles',
+		title: '[[openai:summarize-topic]]',
+	});
+	return hookData;
+};
+
+socketPlugins.openai = {};
+
+socketPlugins.openai.summarizeTopic = async function (socket, data) {
+	const { tid } = data;
+	if (!await privileges.topics.can('topics:read', tid, socket.uid)) {
+		throw new Error('[[error:no-privileges]]');
+	}
+	const settings = await getSettings();
+	if (!await canUseOpenAI(socket.uid, settings)) {
+		return;
+	}
+
+	return summary.summarizeTopic(tid, openai, settings);
+};
