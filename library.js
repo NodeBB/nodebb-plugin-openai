@@ -10,7 +10,6 @@ const controllers = require('./lib/controllers');
 const routeHelpers = require.main.require('./src/routes/helpers');
 const socketHelpers = require.main.require('./src/socket.io/helpers');
 const topics = require.main.require('./src/topics');
-const posts = require.main.require('./src/posts');
 const user = require.main.require('./src/user');
 const messaging = require.main.require('./src/messaging');
 const api = require.main.require('./src/api');
@@ -277,6 +276,38 @@ plugin.filterTopicThreadTools = async (hookData) => {
 	return hookData;
 };
 
+plugin.actionTopicReply = async (hookData) => {
+	await summary.clearTopicSummary([hookData.post.tid]);
+};
+
+plugin.actionPostEdit = async (hookData) => {
+	await summary.clearTopicSummary([hookData.post.tid]);
+};
+
+plugin.actionPostsPurge = async (hookData) => {
+	const { posts } = hookData;
+	const uniqTids = [...new Set(posts.map(p => p.tid))];
+	await summary.clearTopicSummary(uniqTids);
+};
+
+plugin.actionPostRestore = async (hookData) => {
+	await summary.clearTopicSummary([hookData.post.tid]);
+};
+
+plugin.actionPostDelete = async (hookData) => {
+	await summary.clearTopicSummary([hookData.post.tid]);
+};
+
+plugin.actionPostMove = async (hookData) => {
+	await summary.clearTopicSummary([hookData.post.tid, hookData.tid]);
+};
+
+plugin.actionPostChangeOwner = async (hookData) => {
+	const { posts } = hookData;
+	const uniqTids = [...new Set(posts.map(p => p.tid))];
+	await summary.clearTopicSummary(uniqTids);
+};
+
 socketPlugins.openai = {};
 
 socketPlugins.openai.summarizeTopic = async function (socket, data) {
@@ -289,5 +320,11 @@ socketPlugins.openai.summarizeTopic = async function (socket, data) {
 		return;
 	}
 
-	return summary.summarizeTopic(tid, openai, settings);
+	let openaiSummary = await topics.getTopicField(tid, 'openai:summary');
+	if (openaiSummary) {
+		return openaiSummary;
+	}
+	openaiSummary = await summary.summarizeTopic(tid, openai, settings);
+	await topics.setTopicField(tid, 'openai:summary', openaiSummary);
+	return openaiSummary;
 };
