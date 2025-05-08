@@ -36,8 +36,8 @@
     "openai": "4.53.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.3.0",
-    "@commitlint/config-angular": "19.3.0",
+    "@commitlint/cli": "19.8.1",
+    "@commitlint/config-angular": "19.8.1",
     "eslint": "8.57.0",
     "eslint-config-nodebb": "0.2.1",
     "eslint-plugin-import": "2.29.1",
