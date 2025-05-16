@@ -34,18 +34,19 @@ const defaults = {
 
 plugin.init = async (params) => {
 	const { router /* , middleware , controllers */ } = params;
-	const settings = await meta.settings.get('openai')
+	const settings = await meta.settings.get('openai');
 	if (settings && settings.apikey) {
 		openai = new OpenAI({
 			apiKey: settings.apikey,
 		});
+		plugin.openai = openai;
 	}
 
 	routeHelpers.setupAdminPageRoute(router, '/admin/plugins/openai', controllers.renderAdminPage);
 };
 
 async function getSettings() {
-	const settings = await meta.settings.get('openai')
+	const settings = await meta.settings.get('openai');
 	return {...defaults, ...settings };
 }
 
@@ -150,7 +151,7 @@ plugin.actionMessagingSave = async function (hookData) {
 			let messages = await messaging.getMessagesFields(mids, ['fromuid', 'content', 'system']);
 			messages = messages.filter(m => m && !m.system);
 			conversation = messages.map(
-				(msg) => ({ role: msg.fromuid === chatgptUid ? 'assistant' : 'user', content: msg.content })
+				msg => ({ role: msg.fromuid === chatgptUid ? 'assistant' : 'user', content: msg.content })
 			);
 		}
 
@@ -180,7 +181,8 @@ async function canUseOpenAI(uid, settings, silent = false) {
 
 async function checkReputation(uid, settings, silent) {
 	const reputation = await user.getUserField(uid, 'reputation');
-	const hasEnoughRep = parseInt(settings.minimumReputation, 10) === 0 || parseInt(reputation, 10) >= parseInt(settings.minimumReputation, 10);
+	const hasEnoughRep = parseInt(settings.minimumReputation, 10) === 0 ||
+		parseInt(reputation, 10) >= parseInt(settings.minimumReputation, 10);
 
 	if (!hasEnoughRep && !silent) {
 		sockets.server.in(`uid_${uid}`).emit('event:alert', {
