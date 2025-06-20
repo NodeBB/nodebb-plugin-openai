@@ -41,16 +41,8 @@
 
 					<div class="mb-3">
 						<label class="form-label" for="model">Model</label>
-						<select class="form-select" id="model" name="model" title="Model">
-							<option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-							<option value="gpt-4o-mini">gpt-4o-mini</option>
-							<option value="gpt-4o">gpt-4o</option>
-							<option value="gpt-4-turbo">gpt-4-turbo</option>
-							<option value="gpt-4">gpt-4</option>
-							<option value="gpt-4.1-mini">gpt-4.1-mini</option>
-							<option value="gpt-4.1">gpt-4.1</option>
-							<option value="gemini-2.0-flash">gemini-2.0-flash</option>
-						</select>
+						<input type="text" id="model" name="model" class="form-control" placeholder="e.g. llama3" value="{model}" />
+    					<p class="help-block">Enter the exact name of your local model from Ollama (e.g. `llama3`, `mistral`, etc.)</p>
 					</div>
 					<div class="">
 						<label class="form-label" for="systemPrompt">System Prompt</label>
