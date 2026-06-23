@@ -1,5 +1,23 @@
 {
 	"error.need-x-reputation-to-mention": "דרושה לך מוניטין של %1 לפחות כדי לאזכר את chatgpt",
 	"summarize-topic": "סכם נושא",
-	"topic-summary": "סיכום הנושא"
+	"topic-summary": "סיכום הנושא",
+
+	"admin.general": "כללי",
+	"admin.apikey": "מפתח API",
+	"admin.apikey-help": "השג את <a href=\"https://platform.openai.com/api-keys\">מפתח ה-API</a> שלך והזן אותו למעלה. ניתן להזין מפתח API של Google Gemini אם ברצונך להשתמש ב-Google Gemini. אל תשכח לשנות את המודל שבשימוש לגרסת gemini. דורש הפעלה מחדש.",
+	"admin.api-base-url": "כתובת בסיס של API",
+	"admin.api-base-url-help": "אם ברצונך להשתמש ב-API של Google Gemini, הזן כאן את כתובת הבסיס (https://generativelanguage.googleapis.com/v1beta/openai/). אחרת, השאר ריק כדי להשתמש ב-API של OpenAI. דורש הפעלה מחדש.",
+	"admin.chatgpt-username": "שם משתמש של ChatGPT",
+	"admin.chatgpt-username-help": "<a href=\"%1/admin/manage/users\">צור משתמש</a> והזן את שם המשתמש שלו. משתמשים אחרים יוכלו לאזכר את המשתמש הזה כדי לשאול שאלות את ChatGPT, או לשלוח הודעות פרטיות אם הדבר מאופשר למטה.",
+	"admin.enable-private-messages": "אפשר הודעות פרטיות",
+	"admin.enable-private-messages-help": "אם מאופשר, משתמשים יוכלו לשלוח הודעות פרטיות למשתמש ChatGPT.",
+	"admin.model": "מודל",
+	"admin.system-prompt": "הנחיית מערכת",
+	"admin.system-prompt-placeholder": "אתה עוזר מועיל",
+	"admin.restrictions": "הגבלות",
+	"admin.minimum-reputation": "מוניטין מזערי",
+	"admin.minimum-reputation-help": "המוניטין המזערי הנדרש כדי לאזכר את משתמש chatgpt. (0 לביטול)",
+	"admin.allowed-groups": "קבוצות מורשות",
+	"admin.allowed-groups-help": "רק משתמשים בקבוצות אלו יוכלו לאזכר את משתמש chatgpt. השאר ריק כדי לאפשר לכל הקבוצות."
 }
