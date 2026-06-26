@@ -21,7 +21,7 @@ $('document').ready(function () {
 				size: 'large',
 				buttons: {
 					ok: {
-						label: 'OK',
+						label: '[[global:ok]]',
 						className: 'btn-primary',
 					},
 				},

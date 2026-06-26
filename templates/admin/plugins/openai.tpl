@@ -5,43 +5,43 @@
 		<div id="spy-container" class="col-12 col-md-8 px-0 mb-4" tabindex="0">
 			<form role="form" class="openai-settings">
 				<div class="mb-4">
-					<h5 class="fw-bold tracking-tight settings-header">General</h5>
+					<h5 class="fw-bold tracking-tight settings-header">[[openai:admin.general]]</h5>
 
 					<div class="mb-3">
-						<label class="form-label" for="apikey">API Key</label>
-						<input type="text" id="apikey" name="apikey" title="API Key" class="form-control">
+						<label class="form-label" for="apikey">[[openai:admin.apikey]]</label>
+						<input type="text" id="apikey" name="apikey" title="[[openai:admin.apikey]]" class="form-control">
 						<p class="form-text">
-							Get your <a href="https://platform.openai.com/api-keys">API Key</a> and enter it above. You can enter a Google Gemini API key if you want to use Google Gemini. Don't forget to change the model used to a gemini variant. Requires a restart.
+							[[openai:admin.apikey-help]]
 						</p>
 					</div>
 
 					<div class="mb-3">
-						<label class="form-label" for="apiBaseUrl">API Base Url</label>
-						<input type="text" id="apiBaseUrl" name="apiBaseUrl" title="API Base Url" class="form-control">
+						<label class="form-label" for="apiBaseUrl">[[openai:admin.api-base-url]]</label>
+						<input type="text" id="apiBaseUrl" name="apiBaseUrl" title="[[openai:admin.api-base-url]]" class="form-control">
 						<p class="form-text">
-							If you want to use Google's Gemini API, enter the base URL here (https://generativelanguage.googleapis.com/v1beta/openai/). Otherwise, leave it blank to use OpenAI's API. Requires a restart.
+							[[openai:admin.api-base-url-help]]
 						</p>
 					</div>
 
 					<div class="mb-3">
-						<label class="form-label" for="chatgpt-username">ChatGPT Username</label>
-						<input type="text" id="chatgpt-username" name="chatgpt-username" title="ChatGPT Username" class="form-control">
+						<label class="form-label" for="chatgpt-username">[[openai:admin.chatgpt-username]]</label>
+						<input type="text" id="chatgpt-username" name="chatgpt-username" title="[[openai:admin.chatgpt-username]]" class="form-control">
 						<p class="form-text">
-							<a href="{config.relative_path}/admin/manage/users">Create a user</a> and enter their username. Other users can mention this user to ask questions to ChatGPT or send private messages if enabled below.
+							[[openai:admin.chatgpt-username-help, {config.relative_path}]]
 						</p>
 					</div>
 
 					<div class="form-check form-switch">
 						<input type="checkbox" class="form-check-input" id="enablePrivateMessages" name="enablePrivateMessages">
-						<label for="enablePrivateMessages" class="form-check-label">Enable Private Messages</label>
+						<label for="enablePrivateMessages" class="form-check-label">[[openai:admin.enable-private-messages]]</label>
 						<p class="form-text">
-							If enabled users can send ChatGPT user private messages.
+							[[openai:admin.enable-private-messages-help]]
 						</p>
 					</div>
 
 					<div class="mb-3">
-						<label class="form-label" for="model">Model</label>
-						<select class="form-select" id="model" name="model" title="Model">
+						<label class="form-label" for="model">[[openai:admin.model]]</label>
+						<select class="form-select" id="model" name="model" title="[[openai:admin.model]]">
 							<option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
 							<option value="gpt-4o-mini">gpt-4o-mini</option>
 							<option value="gpt-4o">gpt-4o</option>
@@ -53,30 +53,30 @@
 						</select>
 					</div>
 					<div class="">
-						<label class="form-label" for="systemPrompt">System Prompt</label>
-						<textarea class="form-control" id="systemPrompt" name="systemPrompt" title="System prompt" placeholder="You are a helpful assistant" rows="8"></textarea>
+						<label class="form-label" for="systemPrompt">[[openai:admin.system-prompt]]</label>
+						<textarea class="form-control" id="systemPrompt" name="systemPrompt" title="[[openai:admin.system-prompt]]" placeholder="[[openai:admin.system-prompt-placeholder]]" rows="8"></textarea>
 					</div>
 				</div>
 
 				<div class="">
-					<h5 class="fw-bold tracking-tight settings-header">Restrictions</h5>
+					<h5 class="fw-bold tracking-tight settings-header">[[openai:admin.restrictions]]</h5>
 
 					<div class="mb-3">
-						<label class="form-label" for="minimumReputation">Minimum Reputation</label>
-						<input type="text" id="minimumReputation" name="minimumReputation" title="Minimum Reputation" class="form-control">
+						<label class="form-label" for="minimumReputation">[[openai:admin.minimum-reputation]]</label>
+						<input type="text" id="minimumReputation" name="minimumReputation" title="[[openai:admin.minimum-reputation]]" class="form-control">
 						<p class="form-text">
-							Minimum reputation required to mention chatgpt user. (0 to disable)
+							[[openai:admin.minimum-reputation-help]]
 						</p>
 					</div>
 					<div class="mb-3">
-						<label class="form-label" form="allowedGroups">Allowed Groups</label>
+						<label class="form-label" form="allowedGroups">[[openai:admin.allowed-groups]]</label>
 						<select class="form-select" multiple id="allowedGroups" name="allowedGroups" size="10">
 							{{{ each groups }}}
 							<option value="{./displayName}">{./displayName}</option>
 							{{{ end }}}
 						</select>
 						<p class="form-text">
-							Only users in these groups will be able to mention the chatgpt user. Leave blank to allow all groups.
+							[[openai:admin.allowed-groups-help]]
 						</p>
 					</div>
 				</div>

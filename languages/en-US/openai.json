@@ -1,5 +1,23 @@
 {
 	"error.need-x-reputation-to-mention": "You need at least %1 reputation for mentioning chatgpt",
 	"summarize-topic": "Summarize Topic",
-	"topic-summary": "Topic Summary"
+	"topic-summary": "Topic Summary",
+
+	"admin.general": "General",
+	"admin.apikey": "API Key",
+	"admin.apikey-help": "Get your <a href=\"https://platform.openai.com/api-keys\">API Key</a> and enter it above. You can enter a Google Gemini API key if you want to use Google Gemini. Don't forget to change the model used to a gemini variant. Requires a restart.",
+	"admin.api-base-url": "API Base Url",
+	"admin.api-base-url-help": "If you want to use Google's Gemini API, enter the base URL here (https://generativelanguage.googleapis.com/v1beta/openai/). Otherwise, leave it blank to use OpenAI's API. Requires a restart.",
+	"admin.chatgpt-username": "ChatGPT Username",
+	"admin.chatgpt-username-help": "<a href=\"%1/admin/manage/users\">Create a user</a> and enter their username. Other users can mention this user to ask questions to ChatGPT or send private messages if enabled below.",
+	"admin.enable-private-messages": "Enable Private Messages",
+	"admin.enable-private-messages-help": "If enabled users can send ChatGPT user private messages.",
+	"admin.model": "Model",
+	"admin.system-prompt": "System Prompt",
+	"admin.system-prompt-placeholder": "You are a helpful assistant",
+	"admin.restrictions": "Restrictions",
+	"admin.minimum-reputation": "Minimum Reputation",
+	"admin.minimum-reputation-help": "Minimum reputation required to mention chatgpt user. (0 to disable)",
+	"admin.allowed-groups": "Allowed Groups",
+	"admin.allowed-groups-help": "Only users in these groups will be able to mention the chatgpt user. Leave blank to allow all groups."
 }
