@@ -203,7 +203,7 @@ async function checkReputation(uid, settings, silent) {
 }
 
 async function checkGroupMembership(uid, settings, silent) {
-	let allowedGroups = [];
+	let allowedGroups;
 	try {
 		allowedGroups = JSON.parse(settings.allowedGroups) || [];
 	} catch (err) {
