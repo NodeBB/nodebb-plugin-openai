@@ -125,9 +125,13 @@ plugin.actionMessagingSave = async function (hookData) {
 			return;
 		}
 
+		// Check actual room membership directly against the database.
+		// messaging.isUserInRoom() runs filter:messaging.isUserInRoom, which
+		// moderation plugins use to grant virtual access to every room — that
+		// would make the bot react to every private chat on the forum.
 		const [roomData, inRoom] = await Promise.all([
 			messaging.getRoomData(roomId),
-			messaging.isUserInRoom(chatgptUid, roomId),
+			db.isSortedSetMember(`chat:room:${roomId}:uids`, chatgptUid),
 		]);
 
 		if (!roomData || !inRoom) {
@@ -145,22 +149,17 @@ plugin.actionMessagingSave = async function (hookData) {
 		}
 		let conversation = [{ role: 'user', content: message.content }];
 		if (isPrivate) {
-			const mids = await getMessageIds(roomId, chatgptUid, 0, 20);
-
-			// dont allow chats to get too long
-			if (mids.length > 20) {
-				await api.chats.post({ uid: chatgptUid, session: {} }, {
-					roomId,
-					message: 'Conversation too long, please start a new chat',
-					toMid: message.mid,
-				});
-				return;
-			}
+			// keep context bounded to the 20 most recent messages
+			const mids = await getMessageIds(roomId, chatgptUid, 0, 19);
 			let messages = await messaging.getMessagesFields(mids, ['fromuid', 'content', 'system']);
-			messages = messages.filter(m => m && !m.system);
+			messages = messages.filter(m => m && !m.system && m.content);
 			conversation = messages.map(
-				msg => ({ role: msg.fromuid === chatgptUid ? 'assistant' : 'user', content: msg.content })
+				msg => ({ role: parseInt(msg.fromuid, 10) === parseInt(chatgptUid, 10) ? 'assistant' : 'user', content: msg.content })
 			);
+		}
+
+		if (!conversation.length) {
+			return;
 		}
 
 		const response = await chatComplete(conversation);
@@ -227,17 +226,23 @@ async function checkGroupMembership(uid, settings, silent) {
 	return memberOfAny;
 }
 
+// Returns the newest messages (like core's getMessageIds), in chronological order
 async function getMessageIds(roomId, uid, start, stop) {
 	const isPublic = await db.getObjectField(`chat:room:${roomId}`, 'public');
 	if (parseInt(isPublic, 10) === 1) {
-		return await db.getSortedSetRange(
+		const mids = await db.getSortedSetRevRange(
 			`chat:room:${roomId}:mids`, start, stop
 		);
+		return mids.reverse();
 	}
 	const userjoinTimestamp = await db.sortedSetScore(`chat:room:${roomId}:uids`, uid);
-	return await db.getSortedSetRangeByScore(
-		`chat:room:${roomId}:mids`, start, stop === -1 ? -1 : stop - start + 1, userjoinTimestamp, '+inf'
+	if (userjoinTimestamp === null) {
+		return [];
+	}
+	const mids = await db.getSortedSetRevRangeByScore(
+		`chat:room:${roomId}:mids`, start, stop === -1 ? -1 : stop - start + 1, '+inf', userjoinTimestamp
 	);
+	return mids.reverse();
 }
 
 async function chatComplete(messages) {
