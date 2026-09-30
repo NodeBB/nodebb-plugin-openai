@@ -33,7 +33,7 @@
   },
   "readmeFilename": "README.md",
   "nbbpm": {
-    "compatibility": "^3.2.0 || ^4.0.0"
+    "compatibility": "4.15.0"
   },
   "dependencies": {
     "openai": "4.103.0"
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@commitlint/cli": "19.3.0",
     "@commitlint/config-angular": "19.3.0",
-    "eslint": "10.5.0",
+    "eslint": "10.11.0",
     "eslint-config-nodebb": "^2.0.3",
     "husky": "9.0.11",
     "lint-staged": "15.2.7"

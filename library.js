@@ -4,21 +4,23 @@ const { OpenAI } = require('openai');
 
 let openai;
 
-const db = require.main.require('./src/database');
-const meta = require.main.require('./src/meta');
+const db = nodebb.require('./src/database');
+const meta = nodebb.require('./src/meta');
 const controllers = require('./lib/controllers');
-const routeHelpers = require.main.require('./src/routes/helpers');
-const socketHelpers = require.main.require('./src/socket.io/helpers');
-const topics = require.main.require('./src/topics');
-const user = require.main.require('./src/user');
-const messaging = require.main.require('./src/messaging');
-const api = require.main.require('./src/api');
-const privileges = require.main.require('./src/privileges');
-const groups = require.main.require('./src/groups');
-const sockets = require.main.require('./src/socket.io');
-const socketPlugins = require.main.require('./src/socket.io/plugins');
 const summary = require('./lib/summary');
-const cacheCreate = require('../cache/lru');
+
+const routeHelpers = nodebb.require('./src/routes/helpers');
+const socketHelpers = nodebb.require('./src/socket.io/helpers');
+const topics = nodebb.require('./src/topics');
+const user = nodebb.require('./src/user');
+const messaging = nodebb.require('./src/messaging');
+const api = nodebb.require('./src/api');
+const privileges = nodebb.require('./src/privileges');
+const groups = nodebb.require('./src/groups');
+const sockets = nodebb.require('./src/socket.io');
+const socketPlugins = nodebb.require('./src/socket.io/plugins');
+const cacheCreate = nodebb.require('./src/cache/lru');
+
 const summaryCache = cacheCreate({
 	name: 'openai-summary',
 	max: 200,
@@ -45,12 +47,6 @@ plugin.init = async (params) => {
 			apiKey: settings.apikey,
 			baseURL: settings.apiBaseUrl || 'https://api.openai.com/v1',
 		});
-
-		// Uncomment the following lines to list available models
-		// const list = await openai.models.list();
-		// for await (const model of list) {
-		// console.log(model.id);
-		// }
 
 		plugin.openai = openai;
 	}
