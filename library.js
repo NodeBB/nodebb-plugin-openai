@@ -18,6 +18,11 @@ const groups = require.main.require('./src/groups');
 const sockets = require.main.require('./src/socket.io');
 const socketPlugins = require.main.require('./src/socket.io/plugins');
 const summary = require('./lib/summary');
+const cacheCreate = require('../cache/lru');
+const summaryCache = cacheCreate({
+	name: 'openai-summary',
+	max: 200,
+});
 
 const plugin = module.exports;
 
@@ -26,7 +31,7 @@ const defaults = {
 	'chatgpt-username': '',
 	enablePrivateMessages: 'off',
 	model: 'gpt-3.5-turbo',
-	minimumReputation: 0,
+	minimumReputation: 2,
 	allowedGroups: '[]',
 	systemPrompt: 'You are a helpful assistant',
 };
@@ -330,16 +335,22 @@ socketPlugins.openai.summarizeTopic = async function (socket, data) {
 	if (!await privileges.topics.can('topics:read', tid, socket.uid)) {
 		throw new Error('[[error:no-privileges]]');
 	}
-	const settings = await getSettings();
-	if (!await canUseOpenAI(socket.uid, settings)) {
-		return;
-	}
 
 	let openaiSummary = await topics.getTopicField(tid, 'openai:summary');
 	if (openaiSummary) {
 		return openaiSummary;
 	}
+	const settings = await getSettings();
+	if (!await canUseOpenAI(socket.uid, settings)) {
+		return;
+	}
+	const cooldown = summaryCache.get(`uid:${socket.uid}`);
+	if (cooldown) {
+		throw new Error('[[openai:summary-cooldown-error]]');
+	}
+
 	openaiSummary = await summary.summarizeTopic(tid, openai, settings);
+	summaryCache.set(`uid:${socket.uid}`, 1, 60000);
 	await topics.setTopicField(tid, 'openai:summary', openaiSummary);
 	return openaiSummary;
 };

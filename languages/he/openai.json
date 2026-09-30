@@ -2,6 +2,7 @@
 	"error.need-x-reputation-to-mention": "דרושה לך מוניטין של %1 לפחות כדי לאזכר את chatgpt",
 	"summarize-topic": "סכם נושא",
 	"topic-summary": "סיכום הנושא",
+	"summary-cooldown-error": "עליך להמתין לפני שתסכם את הנושא שוב.",
 
 	"admin.general": "כללי",
 	"admin.apikey": "מפתח API",

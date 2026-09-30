@@ -2,6 +2,7 @@
 	"error.need-x-reputation-to-mention": "You need at least %1 reputation for mentioning chatgpt",
 	"summarize-topic": "Summarize Topic",
 	"topic-summary": "Topic Summary",
+	"summary-cooldown-error": "You must wait before summarizing a topic again.",
 
 	"admin.general": "General",
 	"admin.apikey": "API Key",
